@@ -70,6 +70,7 @@
         flash@0 {
                 status = "okay";
                 m25p,fast-read;
+                label = "bmc";
 #include "aspeed/openbmc-flash-layout-64.dtsi"
         };
 };
