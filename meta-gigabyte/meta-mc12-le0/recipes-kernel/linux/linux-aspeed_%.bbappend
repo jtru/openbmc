@@ -1,10 +1,13 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/linux-aspeed:"
-SRC_URI:append = " file://gigabyte-mc12-le0.dts"
+FILESEXTRAPATHS:prepend := "${THISDIR}:"
 
 do_patch:append() {
 for DTB in ${KERNEL_DEVICETREE}
 do
-  cp -v "${WORKDIR}/${DTB%.dtb}.dts" "${STAGING_KERNEL_DIR}/arch/${ARCH}/boot/dts/"
+  cp -v "${WORKDIR}/linux-aspeed/${DTB%.dtb}.dts" "${STAGING_KERNEL_DIR}/arch/${ARCH}/boot/dts/"
 done
 }
 
+SRC_URI:append = " \
+        file://linux-aspeed/gigabyte-mc12-le0.dts \
+        file://linux-aspeed/mc12-le0.cfg \
+        "
