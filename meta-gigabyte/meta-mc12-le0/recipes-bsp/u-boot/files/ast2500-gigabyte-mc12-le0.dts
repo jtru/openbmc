@@ -3,8 +3,8 @@
 #include "ast2500-u-boot.dtsi"
 
 / {
-	model = "Gigabyte MC12-LE0 BMC";
-	compatible = "aspeed,ast2500-evb", "aspeed,ast2500";
+	model = "Gigabyte MC12-LE0 OpenBMC u-boot";
+	compatible = "aspeed,mc12-le0-bmc", "aspeed,ast2500";
 
 	memory {
 		device_type = "memory";

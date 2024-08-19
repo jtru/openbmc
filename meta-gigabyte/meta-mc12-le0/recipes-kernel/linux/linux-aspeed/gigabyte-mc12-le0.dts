@@ -8,7 +8,7 @@
 #include <dt-bindings/i2c/i2c.h>
 
 / {
-        model = "Gigabyte MC12-LE0 BMC";
+        model = "Gigabyte MC12-LE0 OpenBMC Linux";
         compatible = "aspeed,mc12-le0-bmc", "aspeed,ast2500";
         aliases {
                 serial0 = &uart1;
