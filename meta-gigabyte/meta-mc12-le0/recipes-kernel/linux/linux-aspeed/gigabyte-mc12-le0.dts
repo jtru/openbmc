@@ -14,26 +14,6 @@
                 serial0 = &uart1;
                 serial4 = &uart5;
 
-                /*
-                 * Hardcode the bus number of i2c switches' channels to
-                 * avoid breaking the legacy applications.
-                 */
-                i2c16 = &imux16;
-                i2c17 = &imux17;
-                i2c18 = &imux18;
-                i2c19 = &imux19;
-                i2c20 = &imux20;
-                i2c21 = &imux21;
-                i2c22 = &imux22;
-                i2c23 = &imux23;
-                i2c24 = &imux24;
-                i2c25 = &imux25;
-                i2c26 = &imux26;
-                i2c27 = &imux27;
-                i2c28 = &imux28;
-                i2c29 = &imux29;
-                i2c30 = &imux30;
-                i2c31 = &imux31;
         };
         chosen {
                 stdout-path = &uart5;
