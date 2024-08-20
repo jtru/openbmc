@@ -188,7 +188,6 @@
 
 &i2c0 {
         status = "okay";
-        //Airmax Conn B, CPU0 PIROM, CPU1 PIROM
 };
 
 &i2c1 {
@@ -198,12 +197,10 @@
 
 &i2c2 {
         status = "okay";
-        // Mezz Management SMBus
 };
 
 &i2c3 {
         status = "okay";
-        // SMBus to Board ID EEPROM
 };
 
 &i2c4 {
@@ -248,93 +245,22 @@
 
 &i2c5 {
         status = "okay";
-        // CPU Voltage regulators
-        regulator@48 {
-                compatible = "infineon,pxe1610";
-                reg = <0x48>;
-        };
-        regulator@4a {
-                compatible = "infineon,pxe1610";
-                reg = <0x4a>;
-        };
-        regulator@50 {
-                compatible = "infineon,pxe1610";
-                reg = <0x50>;
-        };
-        regulator@52 {
-                compatible = "infineon,pxe1610";
-                reg = <0x52>;
-        };
-        regulator@58 {
-                compatible = "infineon,pxe1610";
-                reg = <0x58>;
-        };
-        regulator@5a {
-                compatible = "infineon,pxe1610";
-                reg = <0x5a>;
-        };
-        regulator@68 {
-                compatible = "infineon,pxe1610";
-                reg = <0x68>;
-        };
-        regulator@70 {
-                compatible = "infineon,pxe1610";
-                reg = <0x70>;
-        };
-        regulator@72 {
-                compatible = "infineon,pxe1610";
-                reg = <0x72>;
-        };
 };
 
 &i2c6 {
         status = "okay";
-        tpm@20 {
-                compatible = "infineon,slb9645tt";
-                reg = <0x20>;
-        };
-        tmp421@4e {
-                compatible = "ti,tmp421";
-                reg = <0x4e>;
-        };
-        tmp421@4f {
-                compatible = "ti,tmp421";
-                reg = <0x4f>;
-        };
-        eeprom@54 {
-                compatible = "atmel,24c64";
-                reg = <0x54>;
-                pagesize = <32>;
-        };
 };
 
 &i2c7 {
         status = "okay";
-        //HSC, AirMax Conn A
-        adm1278@45 {
-                compatible = "adm1275";
-                reg = <0x45>;
-                shunt-resistor-micro-ohms = <250>;
-        };
 };
 
 &i2c8 {
         status = "okay";
-        tmp421@1f {
-                compatible = "ti,tmp421";
-                reg = <0x1f>;
-        };
-        //Mezz Sensor SMBus
 };
 
 &i2c9 {
         status = "okay";
-        //USB Debug Connector
-        ipmb0@10 {
-                compatible = "ipmb-dev";
-                reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-                i2c-protocol;
-        };
 };
 
 &pwm_tacho {
