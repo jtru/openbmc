@@ -49,8 +49,9 @@
 
         iio-hwmon {
                 compatible = "iio-hwmon";
-                io-channels = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
-                              <&adc 4>, <&adc 5>, <&adc 6>, <&adc 7>;
+                io-channels = <&adc 0>, <&adc 1>, <&adc 2>,
+                              <&adc 4>, <&adc 5>, <&adc 6>,
+                              <&adc 8>, <&adc 12>, <&adc 13>;
         };
 
 };
@@ -179,6 +180,16 @@
 
 &adc {
         status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_adc0_default /* P12V_S5_SCALED P_12V */
+                &pinctrl_adc1_default /* P5V_S0_SCALED P_5V */
+                &pinctrl_adc2_default /* P3V3_S0_SCALED P_3V3 */
+                &pinctrl_adc4_default /* A_VDDPS5 P_VDDCR */
+                &pinctrl_adc5_default /* [[Some GPIO-related thingie?]] P_VBAT_SCALED P_VBAT */
+                &pinctrl_adc6_default /* VCORE P_VDDCR_MC12 */
+                &pinctrl_adc8_default /* P1V2_VDDQ_S3_S0 P_VDDQ */
+                &pinctrl_adc12_default /* P3V3_S5 P_3V3 */
+                &pinctrl_adc13_default>; /* A_VDD18S5 P_1V8 */
 };
 
 &video {
