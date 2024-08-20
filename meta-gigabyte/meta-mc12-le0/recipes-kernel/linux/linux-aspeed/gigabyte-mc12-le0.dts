@@ -192,7 +192,6 @@
 
 &i2c1 {
         status = "okay";
-
 };
 
 &i2c2 {
@@ -236,7 +235,6 @@
                                 compatible = "ti,tmp75";
                                 reg = <0x50>;
                         };
-
 
                 };
 
