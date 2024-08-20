@@ -193,216 +193,7 @@
 
 &i2c1 {
         status = "okay";
-        //X24 Riser
-        i2c-switch@71 {
-                compatible = "nxp,pca9544";
-                #address-cells = <1>;
-                #size-cells = <0>;
-                reg = <0x71>;
 
-                imux16: i2c@0 {
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-                        reg = <0>;
-
-                        ina230@45 {
-                                compatible = "ti,ina230";
-                                reg = <0x45>;
-                        };
-
-                        tmp75@48 {
-                                compatible = "ti,tmp75";
-                                reg = <0x48>;
-                        };
-
-                        tmp421@49 {
-                                compatible = "ti,tmp75";
-                                reg = <0x49>;
-                        };
-
-                        eeprom@50 {
-                                compatible = "atmel,24c64";
-                                reg = <0x50>;
-                                pagesize = <32>;
-                        };
-
-                        i2c-switch@73 {
-                                compatible = "nxp,pca9546";
-                                #address-cells = <1>;
-                                #size-cells = <0>;
-                                reg = <0x73>;
-
-                                imux20: i2c@0 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <0>;
-                                };
-
-                                imux21: i2c@1 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <1>;
-                                };
-
-                                imux22: i2c@2 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <2>;
-                                };
-
-                                imux23: i2c@3 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <3>;
-                                };
-
-                        };
-
-                };
-
-                imux17: i2c@1 {
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-                        reg = <1>;
-
-                        ina230@45 {
-                                compatible = "ti,ina230";
-                                reg = <0x45>;
-                        };
-
-                        tmp421@48 {
-                                compatible = "ti,tmp75";
-                                reg = <0x48>;
-                        };
-
-                        tmp421@49 {
-                                compatible = "ti,tmp75";
-                                reg = <0x49>;
-                        };
-
-                        eeprom@50 {
-                                compatible = "atmel,24c64";
-                                reg = <0x50>;
-                                pagesize = <32>;
-                        };
-
-                        i2c-switch@73 {
-                                compatible = "nxp,pca9546";
-                                #address-cells = <1>;
-                                #size-cells = <0>;
-                                reg = <0x73>;
-
-                                imux24: i2c@0 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <0>;
-                                };
-
-                                imux25: i2c@1 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <1>;
-                                };
-
-                                imux26: i2c@2 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <2>;
-                                };
-
-                                imux27: i2c@3 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <3>;
-                                };
-
-                        };
-
-                };
-
-                imux18: i2c@2 {
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-                        reg = <2>;
-
-                        ina230@45 {
-                                compatible = "ti,ina230";
-                                reg = <0x45>;
-                        };
-
-                        tmp421@48 {
-                                compatible = "ti,tmp75";
-                                reg = <0x48>;
-                        };
-
-                        tmp421@49 {
-                                compatible = "ti,tmp75";
-                                reg = <0x49>;
-                        };
-
-                        eeprom@50 {
-                                compatible = "atmel,24c64";
-                                reg = <0x50>;
-                                pagesize = <32>;
-                        };
-
-                        i2c-switch@73 {
-                                compatible = "nxp,pca9546";
-                                #address-cells = <1>;
-                                #size-cells = <0>;
-                                reg = <0x73>;
-
-                                imux28: i2c@0 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <0>;
-                                };
-
-                                imux29: i2c@1 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <1>;
-                                };
-
-                                imux30: i2c@2 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <2>;
-                                };
-
-                                imux31: i2c@3 {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        reg = <3>;
-                                };
-
-                        };
-
-                };
-
-                imux19: i2c@3 {
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-                        reg = <3>;
-
-                        i2c-switch@40 {
-                                compatible = "ti,ina230";
-                                reg = <0x40>;
-                        };
-
-                        i2c-switch@41 {
-                                compatible = "ti,ina230";
-                                reg = <0x41>;
-                        };
-
-                        i2c-switch@45 {
-                                compatible = "ti,ina230";
-                                reg = <0x45>;
-                        };
-
-                };
-
-        };
 };
 
 &i2c2 {
@@ -417,11 +208,41 @@
 
 &i2c4 {
         status = "okay";
-        // BMC Debug Header
-        ipmb0@10 {
-                compatible = "ipmb-dev";
-                reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-                i2c-protocol;
+
+        i2c-switch@71 {
+                compatible = "nxp,pca9545";
+                #address-cells = <1>;
+                #size-cells = <0>;
+                reg = <0xe2>;
+
+                imux16: i2c@0 {
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+                        reg = <1>;
+
+                        tmp421@98 {
+                                compatible = "ti,tmp75";
+                                reg = <0x98>;
+                        };
+
+                        tmp421@9A {
+                                compatible = "ti,tmp75";
+                                reg = <0x9A>;
+                        };
+
+                        tmp421@9C {
+                                compatible = "ti,tmp75";
+                                reg = <0x9C>;
+                        };
+
+                        tmp421@50 {
+                                compatible = "ti,tmp75";
+                                reg = <0x50>;
+                        };
+
+
+                };
+
         };
 };
 
