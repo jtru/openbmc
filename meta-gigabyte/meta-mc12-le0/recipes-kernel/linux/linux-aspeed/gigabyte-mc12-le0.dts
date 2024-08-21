@@ -97,28 +97,23 @@
 };
 
 &uart2 {
-        // SoL Host Console
         status = "okay";
 };
 
 &uart3 {
-        // SoL BMC Console
         status = "okay";
 };
 
 &uart5 {
-        // BMC Console
         status = "okay";
 };
 
 &kcs2 {
-        // BMC KCS channel 2
         status = "okay";
         aspeed,lpc-io-reg = <0xca8>;
 };
 
 &kcs3 {
-        // BMC KCS channel 3
         status = "okay";
         aspeed,lpc-io-reg = <0xca2>;
 };
