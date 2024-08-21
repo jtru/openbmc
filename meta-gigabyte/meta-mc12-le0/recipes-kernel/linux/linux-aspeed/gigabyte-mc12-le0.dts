@@ -14,7 +14,6 @@
         aliases {
                 serial0 = &uart1;
                 serial4 = &uart5;
-
         };
         chosen {
                 stdout-path = &uart5;
