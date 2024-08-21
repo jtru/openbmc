@@ -164,7 +164,6 @@
         clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>,
                  <&syscon ASPEED_CLK_MAC1RCLK>;
         clock-names = "MACCLK", "RCLK";
-        use-ncsi;
 };
 
 &mac1 {
