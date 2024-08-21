@@ -216,6 +216,17 @@
 &i2c4 {
         status = "okay";
 
+/*
+echo 'lm75 0x4e' > /sys/bus/i2c/devices/i2c-4/new_device
+echo 'lm75 0x4d' > /sys/bus/i2c/devices/i2c-4/new_device
+echo 'lm75 0x4c' > /sys/bus/i2c/devices/i2c-4/new_device
+[57876.514361] lm75 4-004e: hwmon2: sensor 'lm75'
+[57876.519235] i2c i2c-4: new_device: Instantiated device lm75 at 0x4e
+[57913.837023] lm75 4-004d: hwmon3: sensor 'lm75'
+[57913.841768] i2c i2c-4: new_device: Instantiated device lm75 at 0x4d
+[57918.862971] lm75 4-004c: hwmon4: sensor 'lm75'
+[57918.867878] i2c i2c-4: new_device: Instantiated device lm75 at 0x4c
+*/
         i2c-switch@71 {
                 compatible = "nxp,pca9545";
                 #address-cells = <1>;
@@ -242,8 +253,9 @@
                                 reg = <0x9C>;
                         };
 
+// echo 'nct7802 0x28' > /sys/bus/i2c/devices/i2c-4/new_device
                         tmp421@50 {
-                                compatible = "ti,tmp75";
+                                compatible = "nuvoton,nct7802";
                                 reg = <0x50>;
                         };
 
