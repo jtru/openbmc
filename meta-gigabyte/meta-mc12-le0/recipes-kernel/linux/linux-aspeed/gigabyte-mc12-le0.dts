@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0+
-// Copyright (c) 2018 Facebook Inc.
-// Author: Vijay Khemka <vijaykhemka@fb.com>
+// Copyright (c) 2024 Johannes Truschnigg
+// Author: Johannes Truschnigg <johannes@truschnigg.info>
+// XXX This is a work in progress!
 /dts-v1/;
 
 #include "aspeed/aspeed-g5.dtsi"
@@ -8,8 +9,8 @@
 #include <dt-bindings/i2c/i2c.h>
 
 / {
-        model = "Gigabyte MC12-LE0 OpenBMC Linux";
-        compatible = "aspeed,mc12-le0-bmc", "aspeed,ast2500";
+        model = "Gigabyte MC12-LE0 OpenBMC";
+        compatible = "gigabyte,mc12-le0-openbmc", "aspeed,ast2500";
         aliases {
                 serial0 = &uart1;
                 serial4 = &uart5;
