@@ -239,17 +239,17 @@ echo 'lm75 0x4c' > /sys/bus/i2c/devices/i2c-4/new_device
                         reg = <1>;
 
                         tmp421@98 {
-                                compatible = "ti,tmp75";
+                                compatible = "ti,lm75";
                                 reg = <0x98>;
                         };
 
                         tmp421@9A {
-                                compatible = "ti,tmp75";
+                                compatible = "ti,lm75";
                                 reg = <0x9A>;
                         };
 
                         tmp421@9C {
-                                compatible = "ti,tmp75";
+                                compatible = "ti,lm75";
                                 reg = <0x9C>;
                         };
 
