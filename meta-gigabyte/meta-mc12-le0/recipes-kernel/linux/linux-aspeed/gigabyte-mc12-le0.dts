@@ -154,19 +154,18 @@
 
 &mac0 {
         status = "okay";
+        phy-mode = "NC-SI";
+        use-ncsi;
 
         pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_rmii1_default>;
-        clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>,
-                 <&syscon ASPEED_CLK_MAC1RCLK>;
-        clock-names = "MACCLK", "RCLK";
+        pinctrl-0 = <&pinctrl_mac1link_default>;
 };
 
 &mac1 {
         status = "okay";
-
+        phy-mode = "rgmii";
         pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
+        pinctrl-0 = <&pinctrl_mac2link_default>;
 };
 
 &vhub {
