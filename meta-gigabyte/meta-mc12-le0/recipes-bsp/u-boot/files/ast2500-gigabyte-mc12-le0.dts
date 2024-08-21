@@ -5,8 +5,14 @@
 / {
         model = "Gigabyte MC12-LE0 u-boot";
         compatible = "gigabyte,mc12-le0-u-boot", "aspeed,ast2500";
+        aliases {
+                spi0 = &fmc;
+                spi1 = &spi1;
+                ethernet0 = &mac0;
+                ethernet1 = &mac1;
+        };
 
-        memory {
+        memory@80000000 {
                 device_type = "memory";
                 reg = <0x80000000 0x20000000>;
         };
@@ -15,12 +21,6 @@
                 stdout-path = &uart5;
         };
 
-        aliases {
-                spi0 = &fmc;
-                spi1 = &spi1;
-                ethernet0 = &mac0;
-                ethernet1 = &mac1;
-        };
 };
 
 &uart5 {
