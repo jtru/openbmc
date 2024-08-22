@@ -49,17 +49,17 @@
 
 &mac0 {
         status = "okay";
-        phy-mode = "NC-SI";
-        use-ncsi;
+
         pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_mac1link_default>;
+        pinctrl-0 = <&pinctrl_mac1link_default &pinctrl_mdio1_default>;
+        use-ncsi;
 };
 
 &mac1 {
         status = "okay";
-        phy-mode = "rgmii";
+
         pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_mac2link_default>;
+        pinctrl-0 = <&pinctrl_mac2link_default &pinctrl_mdio2_default>;
 };
 
 &fmc {
