@@ -151,7 +151,7 @@
         /*AC0-AC7*/     "","","","","","","","";
 };
 
-&mac0 {
+&mac0 { // NC-SI shared Intel 210
         status = "okay";
 
         pinctrl-names = "default";
@@ -159,11 +159,12 @@
         use-ncsi;
 };
 
-&mac1 {
+&mac1 { // RGMII RTL8211E ???
         status = "okay";
+        phy-mode = "rgmii";
 
         pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_mac2link_default &pinctrl_mdio2_default>;
+        pinctrl-0 = <&pinctrl_mac2link_default &pinctrl_rgmii2_default &pinctrl_mdio2_default>;
 };
 
 &vhub {
