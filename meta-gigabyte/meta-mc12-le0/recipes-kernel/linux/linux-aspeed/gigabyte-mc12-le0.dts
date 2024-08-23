@@ -210,17 +210,17 @@
         status = "okay";
 
         lm75@4c {
-                compatible = "national,lm75";
+                compatible = "national,lm75", "ti,lm75";
                 reg = <0x4c>;
         };
 
         lm75@4d {
-                compatible = "national,lm75";
+                compatible = "national,lm75", "ti,lm75";
                 reg = <0x4d>;
         };
 
         lm75@4e {
-                compatible = "national,lm75";
+                compatible = "national,lm75", "ti,lm75";
                 reg = <0x4e>;
         };
 
