@@ -209,26 +209,38 @@
 &i2c4 {
         status = "okay";
 
-        lm75@4c {
-                compatible = "national,lm75", "ti,lm75";
-                reg = <0x4c>;
-        };
+        i2c-switch@71 {
+                compatible = "nxp,pca9545";
+                #address-cells = <1>;
+                #size-cells = <0>;
+                reg = <0x71>;
 
-        lm75@4d {
-                compatible = "national,lm75", "ti,lm75";
-                reg = <0x4d>;
-        };
+                imux14: i2c@0 {
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+                        reg = <0>;
 
-        lm75@4e {
-                compatible = "national,lm75", "ti,lm75";
-                reg = <0x4e>;
-        };
+                        lm75@4c {
+                                compatible = "national,lm75", "ti,lm75";
+                                reg = <0x4c>;
+                        };
 
-        nct7802@50 {
-                compatible = "nuvoton,nct7802";
-                reg = <0x28>;
-        };
+                        lm75@4d {
+                                compatible = "national,lm75", "ti,lm75";
+                                reg = <0x4d>;
+                        };
 
+                        lm75@4e {
+                                compatible = "national,lm75", "ti,lm75";
+                                reg = <0x4e>;
+                        };
+
+                        nct7802@28 {
+                                compatible = "nuvoton,nct7802";
+                                reg = <0x28>;
+                        };
+                };
+        };
 };
 
 &i2c5 {
