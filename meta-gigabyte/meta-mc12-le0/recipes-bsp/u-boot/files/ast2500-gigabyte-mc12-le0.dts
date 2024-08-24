@@ -99,13 +99,3 @@
                 spi-rx-bus-width = <2>;
         };
 };
-
-&i2c3 {
-        status = "okay";
-
-};
-
-&i2c7 {
-        status = "okay";
-
-};
