@@ -154,6 +154,7 @@
 &mac0 { // NC-SI shared Intel 210
         status = "okay";
 
+        phy-mode = "rmii";
         pinctrl-names = "default";
         pinctrl-0 = <&pinctrl_mac1link_default &pinctrl_mdio1_default>;
         use-ncsi;
