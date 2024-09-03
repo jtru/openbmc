@@ -26,4 +26,5 @@ RDEPENDS:${PN}-system = " \
         phosphor-post-code-manager \
         phosphor-power-regulators \
         iperf3 \
+        strace \
         "
