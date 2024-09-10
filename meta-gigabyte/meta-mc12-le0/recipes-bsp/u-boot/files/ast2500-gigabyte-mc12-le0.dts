@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-2.0+
+// Copyright (c) 2024 Johannes Truschnigg
+// Author: Johannes Truschnigg <johannes@truschnigg.info>
+// XXX This is a work in progress!
 /dts-v1/;
 
 #include "ast2500-u-boot.dtsi"
