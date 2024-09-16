@@ -27,13 +27,22 @@
 
 };
 
+&uart1 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_txd1_default &pinctrl_rxd1_default>;
+};
+
 &uart5 {
         u-boot,dm-pre-reloc;
         status = "okay";
 };
 
 &sdrammc {
+        compatible = "aspeed,ast2500-sdram-edac";
         clock-frequency = <400000000>;
+        aspeed,ecc-enabled;
+        status = "okay";
 };
 
 &wdt1 {
@@ -60,7 +69,7 @@
         use-ncsi;
 };
 
-&mac1 { // RGMII RTL8211E ???
+&mac1 { // RGMII RTL8211E
         status = "okay";
         phy-mode = "rgmii";
 
@@ -91,16 +100,10 @@
                 pinctrl-names = "default";
                 pinctrl-0 = <&pinctrl_spi1_default>;
                 status = "okay";
-                spi-max-frequency = <50000000>;
-                spi-tx-bus-width = <2>;
-                spi-rx-bus-width = <2>;
         };
         flash@1 {
                 pinctrl-names = "default";
                 pinctrl-0 = <&pinctrl_spi1_default &pinctrl_spi1cs1_default>;
                 status = "okay";
-                spi-max-frequency = <50000000>;
-                spi-tx-bus-width = <2>;
-                spi-rx-bus-width = <2>;
         };
 };
