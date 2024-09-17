@@ -127,7 +127,7 @@
         /*A0-A7*/       "","","","","","","","",
         /*B0-B7*/       "","","","","","","","",
         /*C0-C7*/       "","","","","","","","",
-        /*D0-D7*/       "button-power-n","control-power-n","button-reset-n","control-reset","","","","",
+        /*D0-D7*/       "button-power-n","control-power-n","button-reset-n","control-reset","","control-nmi","","",
         /*E0-E7*/       "","","","","","","","",
         /*F0-F7*/       "","","","","","","","",
         /*G0-G7*/       "","led-rear-id","","","","","","",
