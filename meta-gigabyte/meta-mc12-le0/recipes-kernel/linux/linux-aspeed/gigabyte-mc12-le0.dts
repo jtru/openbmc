@@ -125,7 +125,7 @@
         status = "okay";
         gpio-line-names =
         /*A0-A7*/       "","","","","","","","",
-        /*B0-B7*/       "","","","","","","","",
+        /*B0-B7*/       "","","","","","power-ok","","",
         /*C0-C7*/       "","","","","","","","",
         /*D0-D7*/       "button-power-n","control-power-n","button-reset-n","control-reset","","control-nmi","","",
         /*E0-E7*/       "","","","","","","","",
