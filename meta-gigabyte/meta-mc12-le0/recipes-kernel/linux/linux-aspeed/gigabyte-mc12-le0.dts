@@ -205,6 +205,12 @@
 
 &i2c2 {
         status = "okay";
+
+        // AMD CPU temperature via sbtsi
+        sbtsi@4c {
+                compatible = "amd,sbtsi";
+                reg = <0x4c>;
+        };
 };
 
 &i2c3 {
