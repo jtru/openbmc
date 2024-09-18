@@ -32,7 +32,7 @@
         },
         {
             "Name": "PowerOk",
-            "LineName": "input-power-good",
+            "LineName": "power-ok",
             "Type": "GPIO",
             "Polarity": "ActiveHigh"
         },
@@ -46,7 +46,7 @@
             "Name": "ResetOut",
             "LineName": "control-reset",
             "Type": "GPIO",
-            "Polarity": "ActiveHigh"
+            "Polarity": "ActiveLow"
         },
         {
             "Name": "SioOnControl",
