@@ -1,0 +1,11 @@
+[Unit]
+Description=OpenBMC ipKVM daemon (AST2500 optimized)
+ConditionPathIsMountPoint=/sys/kernel/config
+
+[Service]
+Restart=always
+ExecStartPre=/usr/bin/create_usbhid.sh disconnect
+ExecStart=/usr/bin/obmc-ikvm -v /dev/video0 -k /dev/hidg0 -p /dev/hidg1 -m 1 -f 15
+
+[Install]
+WantedBy=multi-user.target
