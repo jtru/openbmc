@@ -303,12 +303,12 @@
                 aspeed,fan-tach-ch = /bits/ 8 <0x00>;
         };
 
-        fan@1 { /* SYS FAN1 */
+        fan@1 { /* Not connected to any fan header */
                 reg = <0x01>;
                 aspeed,fan-tach-ch = /bits/ 8 <0x01>;
         };
 
-        fan@2 { // this does not lead to any fan header on the board
+        fan@2 { /* SYS_FAN1 */
                 reg = <0x02>;
                 aspeed,fan-tach-ch = /bits/ 8 <0x02>;
         };
@@ -333,7 +333,7 @@
                 aspeed,fan-tach-ch = /bits/ 8 <0x06>;
         };
 
-        fan@7 { // this does not lead to any fan header on the board
+        fan@7 { // This pwm knob actually controls the PCSPKR volume (255 := min) :-))
                 reg = <0x07>;
                 aspeed,fan-tach-ch = /bits/ 8 <0x07>;
         };
