@@ -313,6 +313,12 @@
 
 &i2c7 {
         status = "okay";
+
+        /* FRU EEPROM */
+        eeprom@51 {
+                compatible = "atmel,24c256";
+                reg = <0x51>;
+        };
 };
 
 &i2c8 {
