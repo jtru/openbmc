@@ -14,8 +14,8 @@
         aliases {
                 serial0 = &uart1;
                 serial4 = &uart5;
-                // ethernet0 = &mac0;
-                // ethernet1 = &mac1;
+                // ethernet0 = &mac0; // enabling this makes udev rename "eth0" to "end0"
+                // ethernet1 = &mac1; // enabling this makes udev rename "eth1" to "end1"
         };
         chosen {
                 stdout-path = &uart5;
@@ -43,7 +43,7 @@
                 ranges;
 
                 video_engine_memory: jpegbuffer {
-                        size = <0x02000000>;    /* 32M */
+                        size = <0x02000000>;
                         alignment = <0x01000000>;
                         compatible = "shared-dma-pool";
                         reusable;
@@ -106,6 +106,10 @@
 &uart3 {
         status = "okay";
 };
+
+/* 'Note that when UART1/2 on an AST2500 board are expected to be used as SUART1/2 for Host,
+the corresponding BMC UART driver should not be mounted. This can be done by modifying the
+DTS nodes of UARTs with status=”disabled”' ??? */
 
 &uart5 {
         status = "okay";
@@ -204,7 +208,8 @@
         /*AC0-AC7*/     "","","","","","","","";
 };
 
-&mac0 { // NC-SI shared Intel 210
+/* NC-SI shared Intel 210 */
+&mac0 {
         status = "okay";
 
         phy-mode = "NC-SI";
@@ -213,7 +218,8 @@
         use-ncsi;
 };
 
-&mac1 { // RGMII RTL8211E
+/* RGMII RTL8211E */
+&mac1 {
         status = "okay";
         phy-mode = "rgmii";
 
