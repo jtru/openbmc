@@ -115,6 +115,10 @@ DTS nodes of UARTs with status=”disabled”' ??? */
         status = "okay";
 };
 
+&uart_routing {
+        status = "okay";
+};
+
 &kcs2 {
         status = "okay";
         aspeed,lpc-io-reg = <0xca8>;
