@@ -325,6 +325,26 @@
                 compatible = "jedec,jc-42.4-temp";
                 reg = <0x1b>;
         };
+
+        dimma0spd: eeprom@50 {
+                compatible = "ee1004";
+                reg = <0x50>;
+        };
+
+        dimma1spd: eeprom@51 {
+                compatible = "ee1004";
+                reg = <0x51>;
+        };
+
+        dimmb0spd: eeprom@52 {
+                compatible = "ee1004";
+                reg = <0x52>;
+        };
+
+        dimmb1spd: eeprom@53 {
+                compatible = "ee1004";
+                reg = <0x53>;
+        };
 };
 
 &i2c6 {
