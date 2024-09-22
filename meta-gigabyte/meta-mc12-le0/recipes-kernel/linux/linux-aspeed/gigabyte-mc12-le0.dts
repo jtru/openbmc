@@ -254,8 +254,10 @@
 
 &i2c2 {
         status = "okay";
+        #address-cells = <1>;
+        #size-cells = <0>;
 
-        // AMD CPU temperature via sbtsi
+        /* AMD CPU temperature via sbtsi */
         sbtsi@4c {
                 compatible = "amd,sbtsi";
                 reg = <0x4c>;
