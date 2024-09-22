@@ -305,6 +305,26 @@
 
 &i2c5 {
         status = "okay";
+
+        dimma0temp: temperature-sensor@18 {
+                compatible = "jedec,jc-42.4-temp";
+                reg = <0x18>;
+        };
+
+        dimma1temp: temperature-sensor@1a {
+                compatible = "jedec,jc-42.4-temp";
+                reg = <0x1a>;
+        };
+
+        dimmb0temp: temperature-sensor@19 {
+                compatible = "jedec,jc-42.4-temp";
+                reg = <0x19>;
+        };
+
+        dimmb1temp: temperature-sensor@1b {
+                compatible = "jedec,jc-42.4-temp";
+                reg = <0x1b>;
+        };
 };
 
 &i2c6 {
