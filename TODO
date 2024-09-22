@@ -1,0 +1,36 @@
+MC12-LE0 TODO:
+
+[x] Fix ipmid expected network interface names (end0, end1) - REVERTED
+[ ] Fix ipmid SEL entry gibberish
+
+[x] Fix x86-power-control powerup sequence
+[x] Fix x86-power-control powerdown sequence
+[ ] Check/implement Core BIOS Done (https://github.com/Intel-BMC/host-misc-comm-manager?tab=readme-ov-file#core-bios-done)
+
+[ ] Fix SOL console
+
+[ ] choose between dbus-sensors and phosphor-hwmon
+
+[ ] (maybe) Fix BMC network configuration (failover bond between eth/end0 and eth/end1)
+
+[ ] Fix LED group daemon configuration
+
+[ ] Deploy a sensible PWM fan control and sensor configuration
+    sysfs path: /sys//devices/platform/ahb/1e780000.apb/1e786000.pwm-tacho-controller/hwmon/hwmon0/
+    phosphor-pid-control: dbus/entity-manager (braucht compile time flag fuer DBUS) oder static JSON? (tradeoffs?)
+    phosphor-fan-presence: statische JSON config (tradeoffs?)
+
+[ ] Sort out my DTS-related chaos/workarounds
+
+[ ] Implement iKVM performance opt. for OpenBMC (service unit override)
+
+[ ] Implement Host BIOS flash/update
+    -> phosphor-software-manager
+       gen-bios-tar ???
+       obmc-flash-host-bios@.service
+          >> strings /home/colo/gigabyte_bmc_dev/BMC_stockfw/usr/local/bin/amp_hostfw_update
+
+[?] Implement FRU support
+
+[ ] (maybe) Implement Ethernet HWaddr retrievel from EEPROM data
+[ ] (maybe) Make u-boot manage random/static HWaddrs for Ethernet
