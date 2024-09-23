@@ -1,0 +1,7 @@
+[Unit]
+Description=Flash host BIOS image to Gigabyte MC12-LE0 mainboard (fake)
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/bin/bios-update-mc12-le0 /tmp/images/%i
