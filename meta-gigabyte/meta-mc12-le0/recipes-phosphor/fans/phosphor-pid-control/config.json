@@ -1,0 +1,118 @@
+{
+  "sensors": [
+    {
+      "name": "CPU_FAN",
+      "type": "fan",
+      "readPath": "/sys/class/hwmon/hwmon0/pwm0",
+      "writePath": "/sys/class/hwmon/hwmon0/pwm0",
+      "min": 0,
+      "max": 255
+    },
+    {
+      "name": "FAN_SYS1",
+      "type": "fan",
+      "readPath": "/sys/class/hwmon/hwmon0/pwm3",
+      "writePath": "/sys/class/hwmon/hwmon0/pwm3",
+      "min": 0,
+      "max": 255
+    },
+    {
+      "name": "FAN_SYS2",
+      "type": "fan",
+      "readPath": "/sys/class/hwmon/hwmon0/pwm4",
+      "writePath": "/sys/class/hwmon/hwmon0/pwm4",
+      "min": 0,
+      "max": 255
+    },
+    {
+      "name": "SYS_FAN3",
+      "type": "fan",
+      "readPath": "/sys/class/hwmon/hwmon0/pwm6",
+      "writePath": "/sys/class/hwmon/hwmon0/pwm6",
+      "min": 0,
+      "max": 255
+    },
+    {
+      "name": "SYS_FAN4",
+      "type": "fan",
+      "readPath": "/sys/class/hwmon/hwmon0/pwm5",
+      "writePath": "/sys/class/hwmon/hwmon0/pwm5",
+      "min": 0,
+      "max": 255
+    },
+    {
+      "name": "SYS_FAN5",
+      "type": "fan",
+      "readPath": "/sys/class/hwmon/hwmon0/pwm7",
+      "writePath": "/sys/class/hwmon/hwmon0/pwm7",
+      "min": 0,
+      "max": 255
+    },
+    {
+      "name": "CPU",
+      "type": "temp",
+      "readPath": "/xyz/openbmc_project/sensors/temperature/CPU_1",
+      "ignoreDbusMinMax": true,
+      "timeout": 0,
+      "unavailableAsFailed": false
+    }
+  ],
+  "zones": [
+    {
+      "id": 1,
+      "minThermalOutput": 0.0,
+      "failsafePercent": 90.0,
+      "pids": [
+        {
+          "name": "Fan1-5",
+          "type": "fan",
+          "inputs": ["SYS_FAN1", "SYS_FAN2", "SYS_FAN3", "SYS_FAN4", "SYS_FAN5"],
+          "setpoint": 128.0,
+          "pid": {
+            "samplePeriod": 0.5,
+            "proportionalCoeff": 10.0,
+            "integralCoeff": 2.0,
+            "feedFwdOffsetCoeff": 0.0,
+            "feedFwdGainCoeff": 0.0,
+            "integralLimit_min": 0.0,
+            "integralLimit_max": 0.0,
+            "outLim_min": 0.0,
+            "outLim_max": 100.0,
+            "slewNeg": -5.0,
+            "slewPos": 5.0
+          }
+        },
+        {
+          "name": "temp1",
+          "type": "stepwise",
+          "inputs": ["CPU_1"],
+          "setpoint": 30.0,
+          "pid": {
+            "samplePeriod": 0.5,
+            "positiveHysteresis": 1.0,
+            "negativeHysteresis": 1.0,
+            "isCeiling": false,
+            "reading": {
+              "0": 35,
+              "1": 45,
+              "2": 55,
+              "3": 65,
+              "4": 75,
+              "5": 85,
+              "6": 95
+            },
+            "output": {
+              "0": 25,
+              "1": 50,
+              "2": 75,
+              "3": 100,
+              "4": 150,
+              "5": 200,
+              "6": 255
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
