@@ -1,0 +1,85 @@
+#!/bin/bash
+set -u
+
+cn=0
+
+__bupd_host_down() {
+        local st
+        read -r _ st < <(busctl get-property xyz.openbmc_project.Chassis.Buttons \
+                        /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host CurrentHostState)
+        [[ ${st} = '"xyz.openbmc_project.State.Host.HostState.Off"' ]] && return 0
+        return 1
+}
+
+
+obmcutil poweroff
+echo 'INFO: Waiting for host to power off...' >&2
+while ! __bupd_host_down
+do
+        (( cn++ ))
+        if (( cn > 60 ))
+        then
+                echo 'FATAL: Failed to poweroff host in time' >&2
+                exit 1
+        fi
+        sleep 2
+done
+cn=0
+
+echo 'INFO: Host is off, beginning work...' >&2
+
+if ! echo '1e630000.spi' > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+then
+        echo 'FATAL: Failed to unbind SPI flash driver' >&2
+        exit 1
+fi
+
+gpioget $(gpiofind spi-bios-hold-n)
+gpioset -m signal $(gpiofind spi-bios-hold-n)=0 &
+bpid="${!}"
+
+sleep 1
+gpioset 0 25=0
+gpioget 0 25
+
+
+sleep 1
+echo 'INFO: Binding ASPEED Flash driver to 1e630000 SPI device...' >&2
+echo '1e630000.spi' > /sys/bus/platform/drivers/spi-aspeed-smc/bind
+
+if ! [[ "$(awk -F: '/"bios"$/{print $1}' /proc/mtd)" ]]
+then
+        echo 'FATAL: Failed to detect "bios" MTD flash partition' >&2
+        exit 1
+fi
+
+echo 'INFO: Dumping BIOS ROM image...' >&2
+dd if=4k if=/dev/$(awk -F: '/"bios"$/{print $1}' /proc/mtd) of=/tmp/hostbios.$$.bin
+
+if ! grep -Fqa AMD_PBS_SETUP /tmp/hostbios.$$.bin
+then
+        echo "FATAL: BIOS dump did NOT pass content sanity check" >&2
+        exit 1
+else
+        echo "INFO: BIOS dump OK" >&2
+fi
+
+
+#echo '1e630000.spi' > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+if ! kill "${bpid}"
+then
+        echo "WARNING: gpioset process pinning the host BIOS access line died" >&2
+fi
+
+sleep 1
+gpioset 0 25=1 >/dev/null
+gpioget 0 25 >/dev/null
+
+sleep 1
+gpioset -m time -s 5 0 25=0 >/dev/null
+gpioget 0 25 >/dev/null
+
+sleep 1
+gpioget $(gpiofind spi-bios-hold-n) >/dev/null
+
+exit 0
