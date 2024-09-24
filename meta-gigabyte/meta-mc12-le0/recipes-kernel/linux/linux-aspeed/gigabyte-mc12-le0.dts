@@ -94,9 +94,6 @@
 
 &uart1 {
         status = "okay";
-        pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_txd1_default
-                     &pinctrl_rxd1_default>;
 };
 
 &uart2 {
