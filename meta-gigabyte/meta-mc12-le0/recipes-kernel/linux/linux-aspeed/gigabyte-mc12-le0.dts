@@ -304,10 +304,12 @@ DTS nodes of UARTs with status=”disabled”' ??? */
                                 reg = <0x4e>;
                         };
 
+			/* // XXX This seems broken - WHY?
                         nct7802@28 {
                                 compatible = "nuvoton,nct7802";
                                 reg = <0x28>;
                         };
+			*/
                 };
         };
 };
