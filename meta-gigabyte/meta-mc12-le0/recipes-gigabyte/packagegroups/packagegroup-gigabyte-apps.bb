@@ -25,6 +25,11 @@ RDEPENDS:${PN}-system = " \
         phosphor-host-postd \
         phosphor-post-code-manager \
         phosphor-power-regulators \
+        entity-manager \
+        phosphor-pid-control \
+        phosphor-software-manager \
         iperf3 \
+        picocom \
+        ipmitool \
         strace \
         "
