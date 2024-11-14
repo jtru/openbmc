@@ -31,6 +31,26 @@ MC12-LE0 TODO:
           >> strings /home/colo/gigabyte_bmc_dev/BMC_stockfw/usr/local/bin/amp_hostfw_update
 
 [?] Implement FRU support
+	mc12-le0 fru-device[232]: failed to read eeprom at 5 address 83 base offset 0
+	mc12-le0 fru-device[232]: failed to read eeprom at 5 address 81 base offset 0
+	mc12-le0 fru-device[232]: failed to read eeprom at 5 address 82 base offset 0
+	mc12-le0 fru-device[232]: failed to read eeprom at 5 address 80 base offset 0
+	mc12-le0 fru-device[232]: device at bus 5 address 54 busy
+	mc12-le0 fru-device[232]: device at bus 5 address 55 busy
+	mc12-le0 swampd[336]: Zone 1: cycleIntervalTimeMS cannot find setting. Use default 100 ms
+	mc12-le0 swampd[336]: Zone 1: updateThermalsTimeMS cannot find setting. Use default 1000 ms
+	mc12-le0 swampd[336]: Sensor: CPU temp /xyz/openbmc_project/sensors/temperature/CPU_1
+	mc12-le0 swampd[336]: ObjectMapper call failure
+	mc12-le0 swampd[336]: Failed during restartControlLoops, try again: Failed to create dbus passive sensor: CPU of type: temp
+	mc12-le0 psusensor[342]: Driver name ast2500-adc not found in sensor whitelist
+	mc12-le0 psusensor[342]: Driver name iio_hwmon not found in sensor whitelist
+	mc12-le0 psusensor[342]: Driver name aspeed_pwm_tacho not found in sensor whitelist
+	mc12-le0 psusensor[342]: Driver name sbtsi not found in sensor whitelist
+	mc12-le0 psusensor[342]: Driver name ast2500-adc not found in sensor whitelist
+	mc12-le0 psusensor[342]: Driver name iio_hwmon not found in sensor whitelist
+	mc12-le0 psusensor[342]: Driver name aspeed_pwm_tacho not found in sensor whitelist
+	mc12-le0 psusensor[342]: Driver name sbtsi not found in sensor whitelist
+
 
 [ ] (maybe) Implement Ethernet HWaddr retrievel from EEPROM data
 [ ] (maybe) Make u-boot manage random/static HWaddrs for Ethernet
