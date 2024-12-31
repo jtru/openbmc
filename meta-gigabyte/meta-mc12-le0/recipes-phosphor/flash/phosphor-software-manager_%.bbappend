@@ -6,5 +6,5 @@ RDEPENDS:${PN} += "bash flashrom phosphor-ipmi-ipmb"
 
 do_install:append() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/bios-update-mc12-le0 ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/bios-update-mc12-le0 ${D}/${bindir}/
 }
