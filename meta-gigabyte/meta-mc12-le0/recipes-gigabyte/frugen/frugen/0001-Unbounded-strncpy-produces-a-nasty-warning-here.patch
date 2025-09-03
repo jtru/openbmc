@@ -1,0 +1,45 @@
+From 373de28fa6eaf56ca2cd0263aac633132a0d1b25 Mon Sep 17 00:00:00 2001
+From: Johannes Truschnigg <johannes@truschnigg.info>
+Date: Wed, 3 Sep 2025 17:28:19 +0000
+Subject: [PATCH] Unbounded strncpy produces a nasty warning here
+
+Upstream-Status: Pending
+---
+ frugen-json.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/frugen-json.c b/frugen-json.c
+index d2ecc36..616e32f 100644
+--- a/frugen-json.c
++++ b/frugen-json.c
+@@ -228,12 +228,7 @@ bool load_mr_mgmt_record(fru_t * fru,
+ 		warn("Field '%s' is not a string for MR record", subtype);
+ 		goto out;
+ 	}
+-	strncpy(mr_rec.mgmt.data,
+-	        field_data,
+-	        FRU_MIN(sizeof(mr_rec.mgmt.data) - 1,
+-	                strlen(field_data)
+-	        )
+-	);
++	strcpy(mr_rec.mgmt.data, field_data);
+ 
+ 	/* Always add to the tail, one by one, sparse addition is not supported */
+ 	if (!fru_add_mr(fru, FRU_LIST_TAIL, &mr_rec)) {
+@@ -284,12 +279,7 @@ bool load_mr_raw_record(fru_t * fru,
+ 		.raw.type = custom_type,
+ 	};
+ 
+-	strncpy(mr_rec.raw.data,
+-		hexstr,
+-		FRU_MIN(sizeof(mr_rec.raw.data) - 1,
+-			strlen(hexstr)
+-		)
+-	);
++	strcpy(mr_rec.raw.data, hexstr);
+ 
+ 	/* Always add to the tail, one by one, sparse addition is not supported */
+ 	if (!fru_add_mr(fru, FRU_LIST_TAIL, &mr_rec)) {
+-- 
+2.47.2
+
