@@ -32,4 +32,5 @@ RDEPENDS:${PN}-system = " \
         picocom \
         ipmitool \
         strace \
+        frugen \
         "
