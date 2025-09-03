@@ -253,30 +253,38 @@ DTS nodes of UARTs with status=”disabled”' ??? */
 
 &i2c0 {
         status = "okay";
+        multi-master;
 };
 
 &i2c1 {
         status = "okay";
+        multi-master;
+
+        /* XXX TODO: 0x73 */
 };
 
 &i2c2 {
         status = "okay";
         #address-cells = <1>;
         #size-cells = <0>;
+        multi-master;
 
         /* AMD CPU temperature via sbtsi */
         sbtsi@4c {
                 compatible = "amd,sbtsi";
                 reg = <0x4c>;
         };
+        /* XXX TODO: 0x0c 0x3c */
 };
 
 &i2c3 {
         status = "okay";
+        multi-master;
 };
 
 &i2c4 {
         status = "okay";
+        multi-master;
 
         i2c-switch@71 {
                 compatible = "nxp,pca9545";
@@ -304,18 +312,18 @@ DTS nodes of UARTs with status=”disabled”' ??? */
                                 reg = <0x4e>;
                         };
 
-			/* // XXX This seems broken - WHY?
+                        // Only on the bus when host is powered up
                         nct7802@28 {
                                 compatible = "nuvoton,nct7802";
                                 reg = <0x28>;
                         };
-			*/
                 };
         };
 };
 
 &i2c5 {
         status = "okay";
+        multi-master;
 
         dimma0temp: temperature-sensor@18 {
                 compatible = "jedec,jc-42.4-temp";
@@ -356,17 +364,20 @@ DTS nodes of UARTs with status=”disabled”' ??? */
                 compatible = "ee1004";
                 reg = <0x53>;
         };
+        /* XXX TODO: 0x30 0x35 */
 };
 
 &i2c6 {
         status = "okay";
+        multi-master;
 };
 
 &i2c7 {
         status = "okay";
+        multi-master;
 
-        /* FRU EEPROM */
-        eeprom@51 {
+        /* FRU EEPROM (not actually FRU 1.0 compliant) */
+        ami_megarac_fru: eeprom@51 {
                 compatible = "atmel,24c256";
                 reg = <0x51>;
         };
@@ -374,26 +385,32 @@ DTS nodes of UARTs with status=”disabled”' ??? */
 
 &i2c8 {
         status = "okay";
+        multi-master;
 };
 
-&i2c9 {
+&i2c9 { // SLOW
         status = "okay";
+        multi-master;
 };
 
 &i2c10 {
         status = "okay";
+        multi-master;
 };
 
 &i2c11 {
         status = "okay";
+        multi-master;
 };
 
 &i2c12 {
         status = "okay";
+        multi-master;
 };
 
 &i2c13 {
         status = "okay";
+        multi-master;
 };
 
 &pwm_tacho {
