@@ -4,7 +4,7 @@
 // XXX This is a work in progress!
 /dts-v1/;
 
-#include "aspeed/aspeed-g5.dtsi"
+#include "aspeed-g5.dtsi"
 #include <dt-bindings/gpio/aspeed-gpio.h>
 #include <dt-bindings/i2c/i2c.h>
 
@@ -65,7 +65,7 @@
                 status = "okay";
                 m25p,fast-read;
                 label = "bmc";
-#include "aspeed/openbmc-flash-layout-64.dtsi"
+#include "openbmc-flash-layout-64.dtsi"
         };
 };
 
