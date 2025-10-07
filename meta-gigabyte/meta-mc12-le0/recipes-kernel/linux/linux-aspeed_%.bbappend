@@ -3,7 +3,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}:"
 do_patch:append() {
 for DTB in ${KERNEL_DEVICETREE}
 do
-  cp -v "${UNPACKDIR}/linux-aspeed/${DTB%.dtb}.dts" "${STAGING_KERNEL_DIR}/arch/${ARCH}/boot/dts/"
+  DT="${DTB##*/}"
+  cp -v "${UNPACKDIR}/linux-aspeed/${DT%.dtb}.dts" "${STAGING_KERNEL_DIR}/arch/${ARCH}/boot/dts/aspeed/"
 done
 }
 
