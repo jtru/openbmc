@@ -24,8 +24,6 @@ SRC_URI = "git://codeberg.org/IPMITool/frugen.git;branch=master;protocol=https"
 SRCREV = "8cb4c9721b967b2083127672e94ef70a4d588b6f"
 SRC_URI[sha256sum] = "3c1b6e639491f6fd8cd2483203710c92c63b77b374be708226d2bf8667a1aef2"
 
-S = "${WORKDIR}/git"
-
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}/patches:"
 
 SRC_URI += "\
