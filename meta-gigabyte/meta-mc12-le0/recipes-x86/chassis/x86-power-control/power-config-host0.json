@@ -22,7 +22,7 @@
             "Name": "PowerButton",
             "LineName": "button-power-n",
             "Type": "GPIO",
-            "Polarity": "ActiveHigh"
+            "Polarity": "ActiveLow"
         },
         {
             "Name": "PowerOut",
