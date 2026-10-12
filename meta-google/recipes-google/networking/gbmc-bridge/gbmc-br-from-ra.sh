@@ -17,15 +17,75 @@
 
 # shellcheck source=meta-google/recipes-google/networking/network-sh/lib.sh
 source /usr/share/network/lib.sh || exit
+# shellcheck source=meta-google/recipes-google/networking/gbmc-net-common/gbmc-net-lib.sh
+source /usr/share/gbmc-net-lib.sh || exit
 
 gbmc_br_from_ra_init=
 gbmc_br_from_ra_mac=
+# RA prefixes we configure addresses in
 declare -A gbmc_br_from_ra_pfxs=()
+# RA prefix -> uptime deadline for its route to come back, see below
+declare -A gbmc_br_from_ra_gone=()
 declare -A gbmc_br_from_ra_prev_addrs=()
+
+# The RA addresses are configured through networkd rather than only with
+# `ip addr`. networkd removes addresses it doesn't manage every time it
+# reconfigures gbmcbr (e.g. on any reload), which briefly changed the
+# preferred source and triggered more reloads in a loop.
+#
+# Every reconfigure of gbmcbr also restarts networkd's router discovery,
+# which flushes all of the RA routes until the next RA is received, which it
+# solicits right away. Route deletions therefore don't immediately mean the
+# prefix is gone, and acting on them would rewrite our config and reload
+# networkd, flushing the routes again. Instead, a prefix is only dropped once
+# its route stayed gone for GBMC_BR_FROM_RA_GRACE seconds. This also covers
+# prefixes networkd removes because they were withdrawn or expired.
+GBMC_BR_FROM_RA_GRACE=5
+GBMC_BR_FROM_RA_CONFS=(/run/systemd/network/{00,}-bmc-gbmcbr.network.d/65-ra-addrs.conf)
+
+# Writes the networkd config for the given "<addr> <pfx>" entries, only
+# reloading networkd when the set of addresses actually changes.
+#
+# Each prefix also gets an on-link route over gbmcbr. The kernel installs one
+# from the RA, but it is flushed on every reconfigure until the next RA, which
+# leaves the rest of the /80 (e.g. other BMCs) unreachable in the meantime.
+gbmc_br_from_ra_write_conf() {
+  local contents=
+  local addr pfx
+  while read -r addr pfx; do
+    [[ -n $addr ]] || continue
+    contents+="[Address]"$'\n'"Address=$addr"$'\n'"AddPrefixRoute=no"$'\n'
+    contents+="[Route]"$'\n'"Destination=$pfx"$'\n'"Metric=512"$'\n'
+  done < <(printf '%s\n' "$@" | sort)
+
+  local changed=
+  local file
+  for file in "${GBMC_BR_FROM_RA_CONFS[@]}"; do
+    if [[ -z $contents ]]; then
+      [[ -e $file ]] || continue
+      rm -f "$file"
+    else
+      [[ "$(cat "$file" 2>/dev/null)"$'\n' == "$contents" ]] && continue
+      mkdir -p "$(dirname "$file")"
+      printf '%s' "$contents" >"$file.tmp"
+      mv -f "$file.tmp" "$file"
+    fi
+    changed=1
+  done
+  if [[ -n $changed ]]; then
+    echo "gBMC Bridge RA addresses changed: ${*:-none}" >&2
+    # shellcheck disable=SC2119
+    gbmc_net_networkd_reload
+  fi
+}
 
 gbmc_br_from_ra_update() {
   [[ -n $gbmc_br_from_ra_init && -n $gbmc_br_from_ra_mac ]] || return
 
+  local now
+  gbmc_ip_monitor_uptime now || return
+  local next=
+  local -a addrs=()
   local pfx
   for pfx in "${!gbmc_br_from_ra_pfxs[@]}"; do
     local cidr
@@ -48,25 +108,39 @@ gbmc_br_from_ra_update() {
       unset 'gbmc_br_from_ra_pfxs[$pfx]'
       continue
     fi
-    local valid="${gbmc_br_from_ra_pfxs["$pfx"]}"
-    if (( valid > 0 )); then
-      if [[ -z ${gbmc_br_from_ra_prev_addrs["$addr"]-} ]]; then
-        echo "gBMC Bridge RA Addr Add: $addr" >&2
-        gbmc_br_from_ra_prev_addrs["$addr"]=1
-        ip addr replace "$addr" dev gbmcbr noprefixroute
-      elif ! ip addr show dev gbmcbr | grep -q "$addr"; then
-        echo "gBMC Bridge RA missing addr add: $addr" >&2
-        ip addr replace "$addr" dev gbmcbr noprefixroute
-      fi
-    else
-      if [[ -n ${gbmc_br_from_ra_prev_addrs["$addr"]-} ]]; then
-        echo "gBMC Bridge RA Addr Del: $addr" >&2
+    local deadline="${gbmc_br_from_ra_gone["$pfx"]-}"
+    if [[ -n $deadline ]] && (( deadline <= now )); then
+      unset 'gbmc_br_from_ra_gone[$pfx]'
+      # Make sure we didn't miss it coming back
+      if [[ -z "$(ip -6 route show "$pfx" dev gbmcbr proto ra 2>/dev/null)" ]]; then
+        echo "gBMC Bridge RA Addr Del: $addr (pfx $pfx label 99)" >&2
         unset 'gbmc_br_from_ra_prev_addrs[$addr]'
+        ip addr del "$addr" dev gbmcbr 2>/dev/null || true
+        ip addrlabel del prefix "$pfx" label 99 2>/dev/null || true
+        unset 'gbmc_br_from_ra_pfxs[$pfx]'
+        continue
       fi
-      ip addr del "$addr" dev gbmcbr
-      unset 'gbmc_br_from_ra_pfxs[$pfx]'
+    elif [[ -n $deadline ]]; then
+      if [[ -z $next ]] || (( deadline < next )); then
+        next=$deadline
+      fi
+    fi
+    addrs+=("$addr $pfx")
+    if [[ -z ${gbmc_br_from_ra_prev_addrs["$addr"]-} ]]; then
+      echo "gBMC Bridge RA Addr Add: $addr (pfx $pfx label 99)" >&2
+      gbmc_br_from_ra_prev_addrs["$addr"]=1
+      # Usable right away, networkd takes it over once it reloads
+      ip addr replace "$addr" dev gbmcbr noprefixroute
+      ip -6 route replace "$pfx" dev gbmcbr metric 512 2>/dev/null || true
+      ip addrlabel add prefix "$pfx" label 99 2>/dev/null || true
     fi
   done
+  if [[ -n $next ]]; then
+    gbmc_ip_monitor_timer from-ra $(( next - now ))
+  else
+    gbmc_ip_monitor_timer_cancel from-ra
+  fi
+  gbmc_br_from_ra_write_conf "${addrs[@]}"
 }
 
 gbmc_br_from_ra_hook() {
@@ -76,16 +150,25 @@ gbmc_br_from_ra_hook() {
     gbmc_ip_monitor_defer
   elif [[ $change == defer ]]; then
     gbmc_br_from_ra_update
+  elif [[ $change == timer && $timer == from-ra ]]; then
+    gbmc_br_from_ra_update
   elif [[ $change == route && $route != *' via '* ]] &&
-       [[ $route =~ ^(.* dev gbmcbr proto ra .*)( +expires +([^ ]+)sec).*$ ]]; then
-    pfx="${route%% *}"
+       [[ $route == *' dev gbmcbr proto ra '* ]]; then
+    local pfx="${route%% *}"
+    # Deletions get a grace period, see the comment on GBMC_BR_FROM_RA_CONFS
     # shellcheck disable=SC2154
     if [[ $action == add ]]; then
-      gbmc_br_from_ra_pfxs["$pfx"]="${BASH_REMATCH[3]}"
-      gbmc_ip_monitor_defer
-    elif [[ $action == del ]]; then
-      gbmc_br_from_ra_pfxs["$pfx"]=0
-      gbmc_ip_monitor_defer
+      unset 'gbmc_br_from_ra_gone[$pfx]'
+      if [[ -z ${gbmc_br_from_ra_pfxs["$pfx"]-} ]]; then
+        gbmc_br_from_ra_pfxs["$pfx"]=1
+        gbmc_ip_monitor_defer
+      fi
+    elif [[ -n ${gbmc_br_from_ra_pfxs["$pfx"]-} ]]; then
+      [[ -z ${gbmc_br_from_ra_gone["$pfx"]-} ]] || return 0
+      local now
+      gbmc_ip_monitor_uptime now || return
+      gbmc_br_from_ra_gone["$pfx"]=$(( now + GBMC_BR_FROM_RA_GRACE ))
+      gbmc_ip_monitor_timer from-ra "$GBMC_BR_FROM_RA_GRACE"
     fi
   elif [[ $change == link && $intf == gbmcbr ]]; then
     rdisc6 -m gbmcbr -r 1 -w 100 >/dev/null 2>&1

@@ -1,6 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC2034
 # shellcheck disable=SC2317
+# shellcheck disable=SC2329
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# shellcheck source=meta-google/recipes-google/networking/gbmc-net-common/gbmc-net-lib.sh
+if [ -f /usr/share/gbmc-net-lib.sh ]; then
+  source /usr/share/gbmc-net-lib.sh || exit
+elif [ -n "${SYSROOT-}" ] && [ -f "$SYSROOT/usr/share/gbmc-net-lib.sh" ]; then
+  source "$SYSROOT/usr/share/gbmc-net-lib.sh" || exit
+elif [ -f "$(dirname "${BASH_SOURCE[0]}")/../gbmc-net-common/gbmc-net-lib.sh" ]; then
+  source "$(dirname "${BASH_SOURCE[0]}")/../gbmc-net-common/gbmc-net-lib.sh" || exit
+else
+  echo "Failed to find gbmc-net-lib.sh" >&2
+  exit 1
+fi
+
 # A list of functions which get executed for each netlink event received.
 # These are configured by the files included below.
 GBMC_IP_MONITOR_HOOKS=()
@@ -28,10 +41,15 @@ for conf in /usr/share/gbmc-ip-monitor/*.sh; do
 done
 
 gbmc_ip_monitor_run_hooks() {
+  gbmc_net_reload_queue_start
   local hook
   for hook in "${GBMC_IP_MONITOR_HOOKS[@]}"; do
     "$hook" || continue
   done
+  if [ "$change" != 'defer' ] && [ -n "$gbmc_ip_monitor_init_done" ] && (( GBMC_NET_NETWORKD_RELOAD_PENDING == 1 || GBMC_NET_NFTABLES_RELOAD_PENDING == 1 )) && [ -z "$GBMC_IP_MONITOR_DEFER_OUTSTANDING" ]; then
+    gbmc_ip_monitor_defer
+  fi
+  gbmc_net_reload_queue_end
 }
 
 gbmc_ip_monitor_generate_init() {
@@ -54,8 +72,52 @@ gbmc_ip_monitor_defer_() {
 }
 gbmc_ip_monitor_defer() {
   [ -z "$GBMC_IP_MONITOR_DEFER_OUTSTANDING" ] || return 0
+  # This reload queue reference is held across events: it is released by the
+  # main loop when the matching [DEFER] arrives, which is what keeps the
+  # reloads requested in between batched together. If the deferral is ever
+  # lost (the child below is killed, or the write to the fifo fails) the
+  # refcount never returns to 0 and no further reload is flushed, so the
+  # child must stay a plain sleep that cannot fail on its own.
+  gbmc_net_reload_queue_start
   gbmc_ip_monitor_defer_ &
   GBMC_IP_MONITOR_DEFER_OUTSTANDING=1
+}
+
+# Stores the seconds since boot in the variable named by $1. This is
+# monotonic, unlike the wall clock which can jump when time is synced.
+gbmc_ip_monitor_uptime() {
+  local -n out_uptime="$1"
+  local up _
+  read -r up _ </proc/uptime || return
+  out_uptime="${up%.*}"
+}
+
+# Uptime deadline of the pending timer for each name
+declare -A GBMC_IP_MONITOR_TIMERS=()
+gbmc_ip_monitor_timer_() {
+  sleep "$2"
+  printf '[TIMER]%s %s\n' "$1" "$3" >&"$GBMC_IP_MONITOR_DEFER"
+}
+# Requests a `change=timer` event with `timer=$1` in no more than $2 seconds.
+# An earlier pending timer with the same name is kept instead, so hooks must
+# re-arm the timer when it fires if they still need a later one. Unlike
+# deferrals, timers don't hold back reloads while they are pending.
+gbmc_ip_monitor_timer() {
+  local name="$1"
+  local secs="$2"
+  (( secs < 0 )) && secs=0
+  local now
+  gbmc_ip_monitor_uptime now || return
+  local due=$(( now + secs ))
+  local pending="${GBMC_IP_MONITOR_TIMERS["$name"]-}"
+  if [[ -n $pending ]] && (( pending <= due )); then
+    return 0
+  fi
+  GBMC_IP_MONITOR_TIMERS["$name"]=$due
+  gbmc_ip_monitor_timer_ "$name" "$secs" "$due" &
+}
+gbmc_ip_monitor_timer_cancel() {
+  unset 'GBMC_IP_MONITOR_TIMERS[$1]'
 }
 
 gbmc_ip_monitor_parse_line() {
@@ -119,6 +181,13 @@ gbmc_ip_monitor_parse_line() {
   elif [[ "$line" == '[DEFER]'* ]]; then
     GBMC_IP_MONITOR_DEFER_OUTSTANDING=
     change=defer
+  elif [[ "$line" =~ ^\[TIMER\]([^ ]+)\ ([0-9]+)$ ]]; then
+    local name="${BASH_REMATCH[1]}"
+    # Ignore timers that were cancelled or replaced by an earlier one
+    [[ ${GBMC_IP_MONITOR_TIMERS["$name"]-} == "${BASH_REMATCH[2]}" ]] || return 2
+    unset 'GBMC_IP_MONITOR_TIMERS[$name]'
+    change=timer
+    timer="$name"
   else
     return 2
   fi
@@ -140,10 +209,17 @@ mkfifo "$FIFODIR"/fifo
 exec {GBMC_IP_MONITOR_DEFER}<>"$FIFODIR"/fifo
 rm -rf "$FIFODIR"
 
+gbmc_net_reload_queue_start
+gbmc_ip_monitor_init_done=
+
 while read -r line; do
   gbmc_ip_monitor_parse_line "$line" || continue
-  gbmc_ip_monitor_run_hooks || continue
+  gbmc_ip_monitor_run_hooks || true
   if [ "$change" = 'init' ]; then
+    gbmc_ip_monitor_init_done=1
+    gbmc_net_reload_queue_end
     systemd-notify --ready
+  elif [ "$change" = 'defer' ]; then
+    gbmc_net_reload_queue_end
   fi
 done < <(gbmc_ip_monitor_generate_init; ip monitor link addr route label & cat <&"$GBMC_IP_MONITOR_DEFER")

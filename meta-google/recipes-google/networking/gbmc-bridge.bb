@@ -31,6 +31,7 @@ SRC_URI += " \
   file://l2-br-dhcp6.service \
   file://gbmc-br-dhcp-term.sh \
   file://gbmc-br-dhcp-term.service \
+  file://gbmc-br-dhcp-lib.sh \
   file://gbmc-br-lib.sh \
   file://gbmc-br-load-ip.service \
   file://gbmc-start-dhcp.sh \
@@ -48,6 +49,7 @@ SRC_URI += " \
 FILES:${PN}:append = " \
   ${datadir}/gbmc-ip-monitor \
   ${datadir}/gbmc-br-dhcp \
+  ${datadir}/gbmc-br-dhcp-lib.sh \
   ${datadir}/gbmc-br-lib.sh \
   ${datadir}/br-dhcp-env \
   ${systemd_system_unitdir} \
@@ -132,7 +134,7 @@ L2BR_DHCP_TYPE ?= ""
 
 ethernet_bridge_install() {
   # install udev rules if any
-  if [ -z "${GBMC_BRIDGE_INTFS}"]; then
+  if [ -z "${GBMC_BRIDGE_INTFS}" ]; then
     return
   fi
   cat /dev/null > ${UNPACKDIR}/-ether-bridge.network
@@ -220,6 +222,7 @@ do_install() {
   install -m0644 ${UNPACKDIR}/50-gbmc-psu-hardreset.sh ${D}${datadir}/gbmc-br-dhcp/
   install -m0644 ${UNPACKDIR}/51-gbmc-reboot.sh ${D}${datadir}/gbmc-br-dhcp/
 
+  install -m0644 ${UNPACKDIR}/gbmc-br-dhcp-lib.sh ${D}${datadir}/
   install -m0644 ${UNPACKDIR}/gbmc-br-lib.sh ${D}${datadir}/
 
   install -d ${D}/${bindir}
