@@ -1,0 +1,53 @@
+Upstream-Status: Inappropriate [local bring-up debug aid, not intended upstream]
+
+diff --git a/ipmid-new.cpp b/ipmid-new.cpp
+index 10774cd..1a8174b 100644
+--- a/ipmid-new.cpp
++++ b/ipmid-new.cpp
+@@ -40,12 +40,14 @@
+
+ #include <algorithm>
+ #include <any>
++#include <cstdio>
+ #include <exception>
+ #include <filesystem>
+ #include <forward_list>
+ #include <map>
+ #include <memory>
+ #include <optional>
++#include <string>
+ #include <tuple>
+ #include <unordered_map>
+ #include <utility>
+@@ -287,6 +289,31 @@ message::Response::ptr executeIpmiCommandCommon(
+             return std::get<HandlerBase::ptr>(chosen)->call(request);
+         }
+     }
++
++    /* No exact nor wildcard handler registered: this command goes
++     * unhandled.  Log it verbosely so out-of-band/BIOS probes can be
++     * identified.  The whole payload is logged rather than a prefix: the
++     * AMI YAFU transfer this is used to study moves bulk data through
++     * these commands. */
++    std::string hexData;
++    const uint8_t* dataPtr = request->payload.data();
++    const size_t dataLen = request->payload.size();
++    char tmp[8];
++    for (size_t i = 0; i < dataLen; i++)
++    {
++        std::snprintf(tmp, sizeof(tmp), "%02X ", dataPtr[i]);
++        hexData += tmp;
++    }
++    lg2::info("UNHANDLED IPMI: NetFn={NETFN} Cmd={CMD} channel={CHANNEL} "
++              "payloadLen={PAYLOAD_LEN} data=[{HEX}]",
++              "NETFN", lg2::hex, request->ctx->netFn, "CMD", lg2::hex,
++              request->ctx->cmd, "CHANNEL", request->ctx->channel,
++              "PAYLOAD_LEN", dataLen, "HEX", hexData);
++
++    /* AMI's OEM commands no longer reach this point: the ami-oem-probe
++     * provider claims their IANAs and logs them with more context. What
++     * falls through to here is everything else that finds no handler. */
++
+     return errorResponse(request, ccInvalidCommand);
+ }
+

@@ -1,0 +1,17 @@
+[Unit]
+Description=Log HTTP requests arriving on the USB host interface (bring-up probe)
+After=host-if-gadget.service
+Wants=host-if-gadget.service
+
+[Service]
+Type=simple
+# Bind only the USB link address, so unrelated requests on the management LAN
+# are not logged as if they came from the host.
+ExecStart=/usr/bin/host-if-listen 169.254.0.17
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+{
+    "id": 32,
+    "revision": 1,
+    "addn_dev_support": 1,
+    "manuf_id": 10437,
+    "prod_id": 12,
+    "aux": 0,
+    "firmware_revision": {
+        "major": 1,
+        "minor": 64
+    },
+    "availability": true
+}

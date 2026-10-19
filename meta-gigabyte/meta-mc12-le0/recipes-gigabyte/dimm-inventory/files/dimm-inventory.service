@@ -1,0 +1,13 @@
+[Unit]
+Description=Publish DDR4 SPD EEPROM contents as DIMM inventory
+After=dbus.service
+Wants=dbus.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dimm-inventory
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -48,6 +48,30 @@
                         compatible = "shared-dma-pool";
                         reusable;
                 };
+
+                // The AST2500 puts the host's VGA framebuffer in the top
+                // 16 MiB of a 512 MiB DRAM, and the VGA engine repaints it
+                // continuously -- a blank screen is 16 MiB of zeroes. Every
+                // 512 MiB Aspeed board reserves it with exactly this node
+                // (see the tyan/intel/inspur/asrock DTS files).
+                vga_memory: framebuffer@9f000000 {
+                        no-map;
+                        reg = <0x9f000000 0x01000000>;
+                };
+
+                // The host-push window (SMBIOS tables, BiosAttributes
+                // datasets...) sits immediately *below* the framebuffer.
+                // libgbtmisc.so's shm_get_addrinfo() derives it from the
+                // kernel command line as (mem=<N>MB) << 20 + 0x80000000, and
+                // the stock firmware's N is 480 -- 512 MiB less the 16 MiB
+                // framebuffer and this 16 MiB window -- which lands here.
+                // Putting the window at 0x9f000000 instead (as this board
+                // originally did) means the BIOS pushes into the framebuffer
+                // and the VGA engine wipes it before the BMC can read it.
+                hostif_memory: buffer@9e000000 {
+                        no-map;
+                        reg = <0x9e000000 0x01000000>;
+                };
         };
 
         iio-hwmon {
@@ -90,6 +114,9 @@
 
 &lpc_ctrl {
         status = "okay";
+        // Direct userspace view of the host-push window above; see the
+        // reserved-memory node for why it is at 0x9e000000/16MiB.
+        memory-region = <&hostif_memory>;
 };
 
 &uart1 {
@@ -345,17 +372,23 @@ DTS nodes of UARTs with status=”disabled”' ??? */
                 reg = <0x1b>;
         };
 
+        /* The SPD addresses run by bank, not by channel: 0x50/0x51 are the
+         * "0" slots of the two channels and 0x52/0x53 the "1" slots. That
+         * matches the temperature-sensor labels above and the host's SMBIOS
+         * Type 17 device locators (the populated slots are DIMM_P0_A1 and
+         * DIMM_P0_B1), whereas the empty SPDs sit at 0x50/0x51.
+         */
         dimma0spd: eeprom@50 {
                 compatible = "ee1004";
                 reg = <0x50>;
         };
 
-        dimma1spd: eeprom@51 {
+        dimmb0spd: eeprom@51 {
                 compatible = "ee1004";
                 reg = <0x51>;
         };
 
-        dimmb0spd: eeprom@52 {
+        dimma1spd: eeprom@52 {
                 compatible = "ee1004";
                 reg = <0x52>;
         };

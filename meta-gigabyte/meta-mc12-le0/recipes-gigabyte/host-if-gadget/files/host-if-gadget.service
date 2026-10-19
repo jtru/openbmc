@@ -1,0 +1,18 @@
+[Unit]
+Description=Present the AMI-style USB host interface to the host (bring-up probe)
+After=sys-kernel-config.mount local-fs.target
+Wants=sys-kernel-config.mount
+Before=host-if-listen.service
+
+# Long-running, not oneshot: the interface can be dropped by a host reboot or a
+# USB re-enumeration, and the script re-applies its state every few seconds.
+[Service]
+Type=simple
+ExecStart=/usr/bin/host-if-gadget-setup
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -11,4 +11,5 @@ done
 SRC_URI:append = " \
         file://linux-aspeed/gigabyte-mc12-le0.dts \
         file://linux-aspeed/mc12-le0.cfg \
+        file://linux-aspeed/f_rndis-callmgmt-dynamic-iface.patch \
         "

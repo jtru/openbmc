@@ -25,7 +25,12 @@ RDEPENDS:${PN}-system = " \
         phosphor-host-postd \
         phosphor-post-code-manager \
         phosphor-power-regulators \
+        phosphor-sel-logger \
         entity-manager \
+        dimm-inventory \
+        smbios-mdr \
+        ami-oem-probe \
+        host-if-gadget \
         phosphor-pid-control \
         phosphor-software-manager \
         iperf3 \

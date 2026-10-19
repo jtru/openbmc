@@ -1,0 +1,24 @@
+{
+    "leds": [
+        {
+            "group": "bmc_booted",
+            "members": []
+        },
+        {
+            "group": "power_on",
+            "members": []
+        },
+        {
+            "group": "enclosure_identify",
+            "members": [
+                {
+                    "Name": "led_rear_id",
+                    "Action": "On",
+                    "DutyOn": 50,
+                    "Period": 0,
+                    "Priority": "On"
+                }
+            ]
+        }
+    ]
+}

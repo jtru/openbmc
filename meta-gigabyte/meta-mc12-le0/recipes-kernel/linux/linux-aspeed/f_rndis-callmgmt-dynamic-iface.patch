@@ -1,0 +1,53 @@
+USB gadget f_rndis: make CDC call-management bDataInterface dynamic.
+
+Upstream-Status: Pending
+
+f_rndis hardcodes its CDC Call Management descriptor's bDataInterface at
+0x01. That is only correct when the RNDIS control/data interfaces land at
+0/1. In a composite where another function (here: AMI's HID at interface
+0, to match eth_mod.c's device shape) is linked first, RNDIS lands at
+1/2 and the hardcoded pointer dangles: it points back at the control
+interface instead of the data interface, the CDC chain becomes invalid,
+and strictly-parsing hosts (Windows usbccgp, AMI's BIOS USB-NIC driver)
+discard the whole configuration and disable the port, even though every
+enumeration stage succeeded.
+
+Patch bDataInterface at bind time to the actual data interface id, the
+same way the union descriptor's master/slave pointers are already
+patched. The static is zero-initialised instead of hardcoded, so the
+behaviour for the plain single-function layout is identical (control=0,
+data=1 assigned at bind) while a composite gets the correct pointer.
+
+Note: the descriptor static is shared across multiple f_rndis instances,
+so the value always reflects the last-bound instance -- the same
+limitation already present for the patched union descriptor fields.
+
+Signed-off-by: OpenBMC bring-up (Gigabyte MC12-LE0 port)
+
+--- a/drivers/usb/gadget/function/f_rndis.c
++++ b/drivers/usb/gadget/function/f_rndis.c
+@@ -124,7 +124,9 @@
+ 	.bDescriptorSubType =	USB_CDC_CALL_MANAGEMENT_TYPE,
+ 
+ 	.bmCapabilities =	0x00,
+-	.bDataInterface =	0x01,
++	/* .bDataInterface patched in rndis_bind(): must be the data
++	 * interface of THIS instance, not a hardcoded 0x01 (which is
++	 * only right when f_rndis is the first composite function). */
+ };
+ 
+ static struct usb_cdc_acm_descriptor rndis_acm_descriptor = {
+@@ -722,6 +724,13 @@
+ 
+ 	rndis_data_intf.bInterfaceNumber = status;
+ 	rndis_union_desc.bSlaveInterface0 = status;
++	/*
++	 * CDC Call Management: point at THIS instance's data interface.
++	 * The upstream hardcoded 0x01 is wrong when f_rndis is not the
++	 * first composite function (e.g. AMI-style HID at interface 0
++	 * shifts RNDIS control/data to 1/2).
++	 */
++	call_mgmt_descriptor.bDataInterface = status;
+ 
+ 	/* allocate instance-specific endpoints */
+ 	ep = usb_ep_autoconfig(cdev->gadget, &fs_in_desc);
