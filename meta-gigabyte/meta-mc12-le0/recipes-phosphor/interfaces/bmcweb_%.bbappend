@@ -3,12 +3,13 @@
 # u-boot + rwfs + MANIFEST), so uploads through the web UI/Redfish are
 # rejected before phosphor-software-manager sees them.
 #
-# 64 MiB gives room for rootfs growth and signing metadata while staying
-# well below the limits used by larger BMC platforms:
-#   meta-amd 128, meta-ampere 65, meta-facebook 256, meta-ibm 400.
+# 65 MiB matches meta-ampere and meta-bytedance, and leaves 1 MiB over a
+# 64 MiB payload for multipart framing and headers.  It remains well below
+# the limits used by larger BMC platforms:
+#   meta-amd 128, meta-facebook 256, meta-ibm 400.
 #
 # This is a compile-time option; it also controls the Redfish
 # UpdateService.MaxImageSizeBytes value.
 EXTRA_OEMESON:append = " \
-    -Dhttp-body-limit=64 \
+    -Dhttp-body-limit=65 \
 "
